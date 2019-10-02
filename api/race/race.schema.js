@@ -14,13 +14,13 @@ const raceSchema = new Schema ({
 		type: String,
 		required: true
 	},
-	user: {
-		type: Schema.Types.ObjectId,
-		ref: 'user'
+	userId: {
+		type: Schema.Types.ObjectID,
+		required: true
 	},
-	stage: {
-		type: Schema.Types.ObjectId,
-		ref: 'stage'
+	stageId: {
+		type: Schema.Types.ObjectID,
+		required: true
 	}
 });
 

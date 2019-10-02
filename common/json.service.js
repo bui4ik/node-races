@@ -1,5 +1,5 @@
-const Joi = require('joi');
 const fs = require("fs");
+const validate = require('../api/validation/validation');
 
 class JsonService {
 	constructor(){
@@ -57,11 +57,3 @@ class JsonService {
 
 module.exports = JsonService;
 
-function validate(body) {
-	const schema = {
-		name: Joi.string().min(3).required(),
-		age: Joi.number().required()
-	};
-
-	return  Joi.validate(body, schema);
-}

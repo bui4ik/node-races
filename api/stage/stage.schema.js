@@ -5,14 +5,7 @@ const stageSchema = new Schema ({
 	title: {type: String, required: true},
 	description: {type: String, required: true},
 	geolocation: {type: [Number], required: true},
-	races: [{
-		type: Schema.Types.ObjectID,
-		ref: 'race'
-	}],
-	league: {
-		type: Schema.Types.ObjectID,
-		ref: 'league'
-	}
+	leagueId: {type: Schema.Types.ObjectID, required: true}
 });
 
 module.exports = mongoose.model('stage', stageSchema );

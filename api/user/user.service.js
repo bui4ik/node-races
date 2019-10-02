@@ -1,85 +1,89 @@
 const User = require('./user.schema');
-const Race = require('../race/race.schema');
+const Races = require('../race/race.schema');
+const getFullCollection = require('../utils/getFullCollection');
+const getElementById = require('../utils/getElementById');
+const saveNewElement = require('../utils/saveNewElement');
 
 class UserService {
-	async getAllUsers(res){
-		try {
-			res.send(await User.find({}))
-		} catch (e) {
-			res.send(e)
-		}
+	getAllUsers(res){
+		getFullCollection(res, User)
 	}
 
-	async getUserById(req, res){
+	getUserById(req, res) {
+		const {userId} = req.params;
+		getElementById(res, User, userId)
+	}
+
+	createNewUser(req, res){
+		let newUser = new User(req.body);
+		saveNewElement(res, newUser)
+	}
+
+	async editUserById(req, res){
 		const { userId } = req.params;
-		const user = await User.findById(userId);
-		res.send(user)
-	}
-
-	async getAllUserRaces(req, res){
-		const { userId } = req.params;
-		const user = await User.findById(userId).populate('races');
-		res.send(user.races)
-	}
-
-	async newUserRace(req, res){
-		const { userId } = req.params;
-		const newRace = new Race(req.body);
-		const user = await User.findById(userId);
-		newRace.user = user;
-		await newRace.save();
-		user.races.push(newRace);
-		await user.save();
-		res.send(newRace)
-	}
-
-	async createNewUser(req, res){
-		let newUser = new User({
-			name: req.body.name,
-			surname: req.body.surname,
-			username: req.body.username
-		});
 		try {
-			await newUser.save();
-			res.send(newUser)
-		} catch (e) {
-			res.send(e)
-		}
-	}
-
-	async editUser(req, res){
-		try {
-			await User.updateOne({_id: req.body.id}, {$set:
+			await User.updateOne({_id: userId}, {$set:
 					{
 						name:req.body.name,
 						surname:req.body.surname,
 						username: req.body.username
 					}});
-			res.send(`User with id: ${req.body.id} was successfully updated`)
+			res.send(await User.findById(userId))
 		} catch (e) {
-			res.send(e)
-		}
-	}
-
-	async deleteUser(req, res){
-		try {
-			await User.deleteOne({_id: req.body.id});
-			res.send(`User with id: ${req.body.id} was successfully removed`)
-		} catch (e) {
-			res.send(e)
+			res.status(400).send(e)
 		}
 	}
 
 	async deleteUserById(req, res){
 		const { userId } = req.params;
-		const user = await User.findById(userId);
-		if (!user){
-			return res.status(404).send('User with such id does not exist');
+		try {
+			const races = await Races.find({});
+			if (!races) {
+				await User.deleteOne({_id: userId});
+			} else {
+				await Races.deleteMany({userId: userId});
+				await User.deleteOne({_id: userId});
+			}
+			res.send(`User with id: ${userId} was successfully removed`)
+		} catch (e) {
+			res.status(404).send(`No user with such id`)
 		}
-		await User.deleteOne({_id: userId});
-		res.send(`User with id: ${userId} was successfully removed`)
+	}
+
+	async getAllUsersWithRaces(req, res){
+		const result = await User.aggregate([{
+			$lookup: {
+				from: 'races',
+				localField: '_id',
+				foreignField: 'userId',
+				as: 'races'
+			}
+		}]);
+		res.send(result);
+	}
+
+	async getAllUsersWithLeagues(req, res){
+		// const userId = "5d938ec8b17e522018e327db";
+		try {
+			let result = await User.aggregate([
+				{
+					$lookup: {
+						from: 'leagues',
+						localField: '_id',
+						foreignField: 'users',
+						as: 'leagues'
+					}
+				}]);
+			// const user = result.filter( e => e._id.toString() === userId);
+			// console.log(user);
+			res.send(result);
+		} catch (e) {
+			res.status(404).send(e.message)
+		}
 	}
 
 }
+
+
 
 module.exports = UserService;

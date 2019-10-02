@@ -12,7 +12,6 @@ app.use((req, res, next) => {
 });
 
 router(app);
-// Set up mongoose connection
 mongoose();
 
 app.listen(3000, () => console.log('Listening 3000'));

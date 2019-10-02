@@ -1,29 +1,29 @@
 const Service = require('./race.service');
-const {createNewRace, deleteRace, editRace, getAllRaces, createCompleteRace, deleteRaceById} = new Service();
+const {createNewRace, editRaceById, getAllRaces, deleteRaceById, getRaceById, racesWithStagesBySeason} = new Service();
 
 class RaceController {
 	getAllRaces(req, res){
 		getAllRaces(res)
 	};
 
-	postNewRace (req,res) {
+	getRaceById(req, res){
+		getRaceById(req, res)
+	}
+
+	createNewRace(req,res) {
 		createNewRace(req, res)
 	}
 
-	editRace (req, res) {
-		editRace(req, res);
-	}
-
-	deleteRace (req, res) {
-		deleteRace(req, res)
-	}
-
-	createCompleteRace(req, res){
-		createCompleteRace(req, res)
+	editRaceById(req, res) {
+		editRaceById(req, res);
 	}
 
 	deleteRaceById(req, res){
 		deleteRaceById(req, res)
+	}
+
+	racesWithStagesBySeason(req, res){
+		racesWithStagesBySeason(req, res)
 	}
 }
 

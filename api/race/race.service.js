@@ -1,6 +1,6 @@
 const Race = require('./race.schema');
-const User = require('../user/user.schema');
 const Stage = require('../stage/stage.schema');
+const League = require('../league/league.schema');
 
 class RaceService {
 	async getAllRaces(res){
@@ -11,75 +11,87 @@ class RaceService {
 		}
 	}
 
-	async createNewRace(req, res){
-		let newRace = new Race({
-			title: req.body.title,
-			time: req.body.time,
-			description: req.body.description
-		});
+	async getRaceById(req, res){
+		const { raceId } = req.params;
 		try {
-			await newRace.save();
-			res.send(newRace)
+			const race = await Race.findById(raceId);
+			res.send(race)
 		} catch (e) {
-			res.send(e)
+			res.status(404).send(`No race with such id`)
 		}
 	}
 
-	async editRace(req, res){
+	async createNewRace(req, res){
+		const { userId, stageId } = req.body;
 		try {
-			await Race.updateOne({_id: req.body.id}, {$set:
+			const stage = await Stage.findById(stageId);
+			const league = await League.findById(stage.leagueId);
+			if (!league.users.includes(userId)) {
+				res.send('user not in this league')
+			} else if (league.users.includes(userId)) {
+				let newRace = new Race(req.body);
+				await newRace.save();
+				res.send(newRace)
+			}
+		} catch (e) {
+			res.status(404).send(e.message)
+		}
+	}
+
+	async editRaceById(req, res){
+		const { raceId } = req.params;
+		try {
+			await Race.updateOne({_id: raceId}, {$set:
 					{
 						title: req.body.title,
 						time: req.body.time,
 						description: req.body.description
 					}});
-			res.send(`Race with id: ${req.body.id} was successfully updated`)
+			res.send(`Race with id: ${raceId} was successfully updated`)
 		} catch (e) {
 			res.send(e)
-		}
-	}
-
-	async deleteRace(req, res){
-		try {
-			await Race.deleteOne({_id: req.body.id});
-			res.send(`Race with id: ${req.body._id} was successfully removed`)
-		} catch (e) {
-			res.send(e)
-		}
-	}
-
-	async createCompleteRace(req, res){
-		const { userId, stageId } = req.body;
-		console.log(req.body);
-		const user = await User.findById(userId);
-		const stage = await Stage.findById(stageId);
-		if (user.leagues.includes(stage.league)){
-			const newRace = new Race({
-				title: req.body.title,
-				time: req.body.time,
-				description: req.body.description,
-			});
-			newRace.user = user;
-			newRace.stage = stage;
-			await newRace.save();
-			user.races.push(newRace);
-			await user.save();
-			stage.races.push(newRace);
-			await stage.save();
-			res.send(newRace)
-		} else {
-			res.status(404).send('No user in such league');
 		}
 	}
 
 	async deleteRaceById(req, res){
 		const { raceId } = req.params;
-		const race = Race.findById(raceId);
-		if (!race){
-			return res.status(404).send('Race with such id does not exist')
+		try {
+			await Race.deleteOne({_id: raceId});
+			res.send(`Race with id: ${raceId} was successfully removed`)
+		} catch (e) {
+			res.status(404).send('Race with such id does not exist')
 		}
-		await Race.deleteOne({_id:raceId});
-		res.send(`Race with id: ${raceId} was successfully removed`)
+	}
+
+	async racesWithStagesBySeason(req, res){
+		const { season } = req.params;
+		try {
+			const result = await League.aggregate([
+				{ $match: {
+						season: `${season}`
+					}},
+				{ $lookup: {
+						from: 'stages',
+						localField: '_id',
+						foreignField: 'leagueId',
+						as: 'stages'
+					}},
+				{ $project: { stages: 1, _id: 0}},
+				{$unwind : {
+						path:'$stages',
+						preserveNullAndEmptyArrays: true
+					}},
+				{ $lookup: {
+						from: 'races',
+						localField: 'stages._id',
+						foreignField: 'stageId',
+						as: 'stages.races'
+					}}
+			]);
+			res.send(result)
+		} catch (e) {
+			res.status(404).send(e)
+		}
 	}
 }
 

@@ -1,5 +1,5 @@
 const Service = require('./league.service');
-const {createNewLeague, deleteLeague, editLeague, getAllLeagues, addUserToLeague, getLeagueById, getLeagueUsers, createLeagueStage, getLeagueStages} = new Service();
+const {createNewLeague, deleteLeagueById, editLeagueById, getAllLeagues, addUserToLeague, getLeagueById } = new Service();
 
 class LeagueController {
 	getAllLeagues(req, res){
@@ -10,33 +10,22 @@ class LeagueController {
 		getLeagueById(req, res)
 	}
 
-	getLeagueUsers(req, res){
-		getLeagueUsers(req, res)
+	createNewLeague(req,res) {
+		createNewLeague(req, res)
 	}
 
-	postNewLeague(req,res) {
-		createNewLeague(req, res)
+	editLeagueById(req, res) {
+		editLeagueById(req, res);
+	}
+
+	deleteLeagueById(req, res) {
+		deleteLeagueById(req, res)
 	}
 
 	addUserToLeague(req, res){
 		addUserToLeague(req, res)
 	}
 
-	createLeagueStage(req, res){
-		createLeagueStage(req, res)
-	}
-
-	getLeagueStages(req, res){
-		getLeagueStages(req, res)
-	}
-
-	editLeague(req, res) {
-		editLeague(req, res);
-	}
-
-	deleteLeague(req, res) {
-		deleteLeague(req, res)
-	}
 }
 
 module.exports = LeagueController;
