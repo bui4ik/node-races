@@ -1,30 +1,66 @@
-const Service = require('./stage.service');
-const {createNewStage, deleteStageById, editStageById, getAllStages, getStageById, addLeagueToStage} = new Service();
+const Service = require('./stage.service')
+const {
+  createNewStage,
+  deleteStageById,
+  editStageById,
+  getAllStages,
+  getStageById,
+  addLeagueToStage,
+} = new Service()
 
 class StageController {
-	getAllStages(req, res){
-		getAllStages(res)
-	};
+  async getAllStages(req, res) {
+    try {
+      res.send(await getAllStages())
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	getStageById(req, res){
-		getStageById(req, res)
-	}
+  async getStageById(req, res) {
+    const { stageId } = req.params
+    try {
+      res.send(await getStageById(stageId))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	createNewStage(req,res) {
-		createNewStage(req, res)
-	}
+  async createNewStage(req, res) {
+    try {
+      res.send(await createNewStage(req.body))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	editStageById(req, res) {
-		editStageById(req, res);
-	}
+  async editStageById(req, res) {
+    const { stageId } = req.params
+    try {
+      res.send(await editStageById(stageId, req.body))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	deleteStageById(req, res) {
-		deleteStageById(req, res)
-	}
+  async deleteStageById(req, res) {
+    const { stageId } = req.params
+    try {
+      res.send(await deleteStageById(stageId))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	addLeagueToStage(req, res) {
-		addLeagueToStage(req, res)
-	}
+  async addLeagueToStage(req, res) {
+    const { stageId } = req.params
+    const { leagueId } = req.body
+    try {
+      res.send(await addLeagueToStage(stageId, leagueId))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 }
 
-module.exports = StageController;
+module.exports = StageController

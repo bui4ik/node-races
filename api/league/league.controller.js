@@ -1,31 +1,66 @@
-const Service = require('./league.service');
-const {createNewLeague, deleteLeagueById, editLeagueById, getAllLeagues, addUserToLeague, getLeagueById } = new Service();
+const Service = require('./league.service')
+const {
+  createNewLeague,
+  deleteLeagueById,
+  editLeagueById,
+  getAllLeagues,
+  addUserToLeague,
+  getLeagueById,
+} = new Service()
 
 class LeagueController {
-	getAllLeagues(req, res){
-		getAllLeagues(res)
-	};
+  async getAllLeagues(req, res) {
+    try {
+      res.send(await getAllLeagues())
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	getLeagueById(req, res){
-		getLeagueById(req, res)
-	}
+  async getLeagueById(req, res) {
+    const { leagueId } = req.params
+    try {
+      res.send(await getLeagueById(leagueId))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	createNewLeague(req,res) {
-		createNewLeague(req, res)
-	}
+  async createNewLeague(req, res) {
+    try {
+      res.send(await createNewLeague(req.body))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	editLeagueById(req, res) {
-		editLeagueById(req, res);
-	}
+  async editLeagueById(req, res) {
+    const { leagueId } = req.params
+    try {
+      res.send(await editLeagueById(leagueId, req.body))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	deleteLeagueById(req, res) {
-		deleteLeagueById(req, res)
-	}
+  async deleteLeagueById(req, res) {
+    const { leagueId } = req.params
+    try {
+      res.send(await deleteLeagueById(leagueId))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	addUserToLeague(req, res){
-		addUserToLeague(req, res)
-	}
-
+  async addUserToLeague(req, res) {
+    const { leagueId } = req.params
+    const { userId } = req.body
+    try {
+      res.send(await addUserToLeague(leagueId, userId))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 }
 
-module.exports = LeagueController;
+module.exports = LeagueController

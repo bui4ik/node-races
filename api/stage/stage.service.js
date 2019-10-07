@@ -1,74 +1,47 @@
-const Stage = require('./stage.schema');
-const Race = require('../race/race.schema');
+const Stage = require('./stage.schema')
+const Race = require('../race/race.schema')
 
 class StageService {
-	async getAllStages(res){
-		try {
-			res.send(await Stage.find({}))
-		} catch (e) {
-			res.send(e)
-		}
-	}
+  async getAllStages() {
+    return Stage.find({})
+  }
 
-	async createNewStage(req, res){
-		let newStage = new Stage(req.body);
-		try {
-			await newStage.save();
-			res.send(newStage)
-		} catch (e) {
-			res.send(e)
-		}
-	}
+  async getStageById(stageId) {
+    return Stage.findById(stageId)
+  }
 
-	async getStageById(req, res){
-		const { stageId } = req.params;
-		try {
-			const stage = await Stage.findById(stageId);
-			res.send(stage)
-		} catch (e) {
-			res.status(404).send(`No stage with such id`)
-		}
-	}
+  async createNewStage(newStageProps) {
+    let newStage = new Stage(newStageProps)
+    newStage.save()
+    return newStage
+  }
 
-	async editStageById(req, res){
-		const { stageId } = req.params;
-		try {
-			await Stage.updateOne({_id: stageId}, {$set:
-					{
-						title: req.body.title,
-						description: req.body.description,
-						geolocation: req.body.geolocation
-					}});
-			res.send(`Stage with id: ${stageId} was successfully updated`)
-		} catch (e) {
-			res.send(e)
-		}
-	}
+  async editStageById(stageId, newProps) {
+    await Stage.updateOne(
+      { _id: stageId },
+      {
+        $set: {
+          title: newProps.title,
+          description: newProps.description,
+          geolocation: newProps.geolocation,
+        },
+      },
+    )
+    return await Stage.findById(stageId)
+  }
 
-	async deleteStageById(req, res){
-		const { stageId } = req.params;
-		try {
-			await Race.deleteMany({stageId: stageId});
-			await Stage.deleteOne({_id: stageId});
-			res.send(`Stage with id: ${stageId} was successfully removed`)
-		} catch (e) {
-			res.send(e)
-		}
-	}
+  async deleteStageById(stageId) {
+    await Race.deleteMany({ stageId: stageId })
+    await Stage.deleteOne({ _id: stageId })
+    return `Stage with id: ${stageId} was successfully removed`
+  }
 
-	async addLeagueToStage(req, res){
-		const { stageId } = req.params;
-		const { leagueId } = req.body;
-		try {
-			const stage = await Stage.findById(stageId);
-			stage.league = leagueId;
-			await stage.save();
-			res.send(stage)
-		} catch (e) {
-			res.status(404).send(e)
-		}
-	}
-
+  async addLeagueToStage(stageId, leagueId) {
+    const stage = await Stage.findById(stageId)
+    stage.league = leagueId
+    await stage.save()
+    return stage
+  }
 }
 
-module.exports = StageService;
+module.exports = StageService

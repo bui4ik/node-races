@@ -1,30 +1,66 @@
-const Service = require('./race.service');
-const {createNewRace, editRaceById, getAllRaces, deleteRaceById, getRaceById, racesWithStagesBySeason} = new Service();
+const Service = require('./race.service')
+const {
+  createNewRace,
+  editRaceById,
+  getAllRaces,
+  deleteRaceById,
+  getRaceById,
+  racesWithStagesBySeason,
+} = new Service()
 
 class RaceController {
-	getAllRaces(req, res){
-		getAllRaces(res)
-	};
+  async getAllRaces(req, res) {
+    try {
+      res.send(await getAllRaces())
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	getRaceById(req, res){
-		getRaceById(req, res)
-	}
+  async getRaceById(req, res) {
+    const { raceId } = req.params
+    try {
+      res.send(await getRaceById(raceId))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	createNewRace(req,res) {
-		createNewRace(req, res)
-	}
+  async createNewRace(req, res) {
+    try {
+      res.send(await createNewRace(req.body))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	editRaceById(req, res) {
-		editRaceById(req, res);
-	}
+  async editRaceById(req, res) {
+    const { raceId } = req.params
+    try {
+      res.send(await editRaceById(raceId, req.body))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 
-	deleteRaceById(req, res){
-		deleteRaceById(req, res)
-	}
+  async deleteRaceById(req, res) {
 
-	racesWithStagesBySeason(req, res){
-		racesWithStagesBySeason(req, res)
-	}
+	  const { raceId } = req.params
+    try {
+      res.send(await deleteRaceById(raceId))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
+
+  async racesWithStagesBySeason(req, res) {
+    const { season } = req.params
+    try {
+      res.send(await racesWithStagesBySeason(season))
+    } catch (e) {
+      res.status(404).send(e.message)
+    }
+  }
 }
 
-module.exports = RaceController;
+module.exports = RaceController

@@ -1,15 +1,9 @@
 const Joi = require('joi');
 
-const schema = Joi.object().keys({
-	name: Joi.string(),
-	surname: Joi.string(),
-	username: Joi.string()
+const userSchema = Joi.object().keys({
+	name: Joi.string().min(3).required(),
+	surname: Joi.string().min(3).required(),
+	username: Joi.string().min(3).required()
 });
 
-async function validator(body) {
-	return  await Joi.validate(body, schema);
-}
-
-
-
-module.exports = validator;
+module.exports = userSchema;
