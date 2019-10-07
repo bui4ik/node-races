@@ -1,26 +1,26 @@
-const Race = require('./race.schema')
-const Stage = require('../stage/stage.schema')
-const League = require('../league/league.schema')
+const Race = require('./race.schema');
+const Stage = require('../stage/stage.schema');
+const League = require('../league/league.schema');
 
 class RaceService {
   getAllRaces() {
-    return Race.find({})
+    return Race.find({});
   }
 
   getRaceById(raceId) {
-    return Race.findById(raceId)
+    return Race.findById(raceId);
   }
 
   async createNewRace(newProps) {
-    const { userId, stageId } = newProps
-    const stage = await Stage.findById(stageId)
-    const league = await League.findById(stage.leagueId)
+    const { userId, stageId } = newProps;
+    const stage = await Stage.findById(stageId);
+    const league = await League.findById(stage.leagueId);
     if (!league.users.includes(userId)) {
-      throw new Error('User not in this league')
+      throw new Error('User not in this league');
     } else if (league.users.includes(userId)) {
-      let newRace = new Race(newProps)
-      await newRace.save()
-      return newRace
+      let newRace = new Race(newProps);
+      await newRace.save();
+      return newRace;
     }
   }
 
@@ -34,13 +34,13 @@ class RaceService {
           description: newProps.description,
         },
       },
-    )
-    return await Race.findById(raceId)
+    );
+    return await Race.findById(raceId);
   }
 
   async deleteRaceById(raceId) {
-    await Race.deleteOne({ _id: raceId })
-    return `Race with id: ${raceId} was successfully removed`
+    await Race.deleteOne({ _id: raceId });
+    return `Race with id: ${raceId} was successfully removed`;
   }
 
   async racesWithStagesBySeason(season) {
@@ -73,8 +73,8 @@ class RaceService {
           as: 'stages.races',
         },
       },
-    ])
+    ]);
   }
 }
 
-module.exports = RaceService
+module.exports = RaceService;

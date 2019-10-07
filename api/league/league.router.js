@@ -1,16 +1,19 @@
+const express = require("express");
+const router = express.Router();
 const LeagueController = require('./league.controller');
 const leagueController = new LeagueController();
 
-function leagueRouter(app){
-	app.route('/leagues')
+function leagueRouter(){
+	router.route('/')
 		.get(leagueController.getAllLeagues.bind(leagueController))
 		.post(leagueController.createNewLeague.bind(leagueController));
-	app.route('/leagues/:leagueId')
+	router.route('/:leagueId')
 		.get(leagueController.getLeagueById.bind(leagueController))
 		.put(leagueController.editLeagueById.bind(leagueController))
 		.delete(leagueController.deleteLeagueById.bind(leagueController));
-	app.route('/leagues/:leagueId/users')
+	router.route('/:leagueId/users')
 		.post(leagueController.addUserToLeague.bind(leagueController));
+	return router
 }
 
 module.exports = leagueRouter;

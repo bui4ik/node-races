@@ -1,19 +1,19 @@
-const User = require('./user.schema')
-const Races = require('../race/race.schema')
+const User = require('./user.schema');
+const Races = require('../race/race.schema');
 
 class UserService {
   getAllUsers() {
-    return User.find({})
+    return User.find({});
   }
 
   getUserById(userId) {
-    return User.findById(userId)
+    return User.findById(userId);
   }
 
   createNewUser(newUserProps) {
-    let newUser = new User(newUserProps)
-    newUser.save()
-    return newUser
+    let newUser = new User(newUserProps);
+    newUser.save();
+    return newUser;
   }
 
   async editUserById(userId, newProps) {
@@ -26,19 +26,19 @@ class UserService {
           username: newProps.username,
         },
       },
-    )
-    return await User.findById({ _id: userId })
+    );
+    return await User.findById({ _id: userId });
   }
 
   async deleteUserById(userId) {
-    const races = await Races.find({})
+    const races = await Races.find({});
     if (!races) {
-      await User.deleteOne({ _id: userId })
+      await User.deleteOne({ _id: userId });
     } else {
-      await Races.deleteMany({ userId: userId })
-      await User.deleteOne({ _id: userId })
+      await Races.deleteMany({ userId: userId });
+      await User.deleteOne({ _id: userId });
     }
-    return `User with id: ${userId} was successfully removed`
+    return `User with id: ${userId} was successfully removed`;
   }
 
   getAllUsersWithRaces() {
@@ -51,7 +51,7 @@ class UserService {
           as: 'races',
         },
       },
-    ])
+    ]);
   }
 
   getAllUsersWithLeagues() {
@@ -64,8 +64,8 @@ class UserService {
           as: 'leagues',
         },
       },
-    ])
+    ]);
   }
 }
 
-module.exports = UserService
+module.exports = UserService;

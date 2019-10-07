@@ -1,58 +1,58 @@
-const fs = require('fs')
-const validate = require('../api/validation/validation')
+const fs = require('fs');
+const validate = require('../api/validation/validation');
 
 class JsonService {
   constructor() {
-    this.users = JSON.parse(fs.readFileSync('./users.json', 'utf8'))
+    this.users = JSON.parse(fs.readFileSync('./users.json', 'utf8'));
   }
 
   getAllUsers(res) {
-    res.send(this.users)
+    res.send(this.users);
   }
 
   createNewUser(req, res) {
-    const { error } = validate(req.body)
+    const { error } = validate(req.body);
     if (error) {
-      res.status(400).send(error.details[0].message)
-      return
+      res.status(400).send(error.details[0].message);
+      return;
     }
-    const id = Math.floor(Math.random() * 100000)
+    const id = Math.floor(Math.random() * 100000);
     const user = {
       id: id,
       name: req.body.name,
       age: req.body.age,
-    }
-    this.users.push(user)
-    this.updateJSON(this.users, res)
+    };
+    this.users.push(user);
+    this.updateJSON(this.users, res);
   }
 
   editUser(req, res) {
-    const { error } = validate(req.body)
+    const { error } = validate(req.body);
     if (error) {
-      res.status(400).send(error.details[0].message)
-      return
+      res.status(400).send(error.details[0].message);
+      return;
     }
     this.users.map(e => {
       if (e.id === req.body.id) {
-        e.name = req.body.name
-        e.age = req.body.age
+        e.name = req.body.name;
+        e.age = req.body.age;
       }
-    })
-    this.updateJSON(this.users, res)
+    });
+    this.updateJSON(this.users, res);
   }
 
   deleteUser(req, res) {
-    if (!req.body.id) res.status(404).send('Id is required')
-    this.users = this.users.filter(e => e.id !== req.body.id)
-    this.updateJSON(this.users, res)
+    if (!req.body.id) res.status(404).send('Id is required');
+    this.users = this.users.filter(e => e.id !== req.body.id);
+    this.updateJSON(this.users, res);
   }
 
   updateJSON(users, res) {
     fs.writeFile('users.json', JSON.stringify(users), err => {
-      if (err) return res.status(404).send(err)
-      res.send(users)
-    })
+      if (err) return res.status(404).send(err);
+      res.send(users);
+    });
   }
 }
 
-module.exports = JsonService
+module.exports = JsonService;
