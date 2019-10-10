@@ -55,7 +55,6 @@ class UserService {
   }
 
   async getAllUsersWithLeagues() {
-    console.log('111')
     return await User.aggregate([
       {
         $lookup: {
