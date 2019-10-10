@@ -7,7 +7,7 @@ function router(app) {
   app.use('/users', userRouter());
   app.use('/races', raceRouter());
   app.use('/stages', stageRouter());
-  app.user('/leagues', leagueRouter());
+  app.use('/leagues', leagueRouter());
 }
 
 module.exports = router;

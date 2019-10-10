@@ -41,8 +41,8 @@ class UserService {
     return `User with id: ${userId} was successfully removed`;
   }
 
-  getAllUsersWithRaces() {
-    return User.aggregate([
+  async getAllUsersWithRaces() {
+    return await User.aggregate([
       {
         $lookup: {
           from: 'races',
@@ -54,8 +54,9 @@ class UserService {
     ]);
   }
 
-  getAllUsersWithLeagues() {
-    return User.aggregate([
+  async getAllUsersWithLeagues() {
+    console.log('111')
+    return await User.aggregate([
       {
         $lookup: {
           from: 'leagues',
